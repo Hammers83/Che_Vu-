@@ -4,802 +4,1372 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Che Vuò? - Powered by Angelo Martelli</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Google Fonts -->
+
+  <!-- Inline SVG Favicon (Fixes 404 Favicon Error) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤌</text></svg>" />
+
+  <!-- Google Fonts for modern typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            heading: ['Outfit', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#fff1f2',
-              100: '#ffe4e6',
-              400: '#fb7185',
-              500: '#f43f5e',
-              600: '#e11d48',
-              700: '#be123c',
-              900: '#881337',
-            },
-            accent: {
-              400: '#a855f7',
-              500: '#8b5cf6',
-              600: '#7c3aed',
-            }
-          },
-          animation: {
-            'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
-            'float': 'float 6s ease-in-out infinite',
-          },
-          keyframes: {
-            pulseGlow: {
-              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
-              '50%': { opacity: '0.9', transform: 'scale(1.05)' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-8px)' },
-            }
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: rgba(15, 21, 37, 0.75);
+      --bg-card-hover: rgba(22, 30, 52, 0.85);
+      --bg-input: rgba(8, 12, 22, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(244, 63, 94, 0.4);
+      --brand-primary: #f43f5e;
+      --brand-hover: #e11d48;
+      --brand-glow: rgba(244, 63, 94, 0.35);
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.05) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
     }
     ::-webkit-scrollbar-track {
-      background: #080a10;
+      background: #05070a;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1e2638;
+      background: #1e293b;
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #313d56;
+      background: #334155;
     }
 
-    /* Glassmorphism Styling */
-    .glass-card {
-      background: rgba(15, 21, 37, 0.75);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Ambient Glowing Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulseGlow 6s ease-in-out infinite alternate;
     }
-    
+    .orb-1 {
+      top: -100px;
+      left: -100px;
+      width: 380px;
+      height: 380px;
+      background: rgba(244, 63, 94, 0.18);
+    }
+    .orb-2 {
+      bottom: -100px;
+      right: -100px;
+      width: 420px;
+      height: 420px;
+      background: rgba(168, 85, 247, 0.18);
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.08); }
+    }
+
+    /* Glassmorphism Components */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
     .glass-input {
-      background: rgba(8, 12, 22, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      transition: all 0.25s ease;
     }
     .glass-input:focus {
-      border-color: #f43f5e;
-      box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);
+      outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 20px var(--brand-glow);
     }
 
-    /* Background Animation */
-    .bg-gradient-animated {
-      background: radial-gradient(circle at 10% 20%, #170d22 0%, #090c15 40%, #06080e 100%);
+    /* Layout Containers */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      width: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.85rem 1.5rem;
     }
 
-    .drag-over {
-      border-color: #f43f5e !important;
-      background: rgba(244, 63, 94, 0.15) !important;
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .glow-effect {
-      box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.35);
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f43f5e, #ec4899, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+    }
+
+    .brand-title-wrap h1 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ffffff, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 6px;
+    }
+
+    .brand-sub {
+      font-size: 0.725rem;
+      color: #fb7185;
+      font-weight: 600;
+    }
+
+    .main-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 30px;
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #fb7185;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .hero-title span {
+      background: linear-gradient(90deg, #f43f5e, #fb7185, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 540px;
+    }
+
+    /* Main Card Form */
+    .workspace-card {
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .section-label {
+      font-family: var(--font-heading);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-label-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Image Upload Dropzone */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+      background: rgba(8, 12, 22, 0.4);
+    }
+    .dropzone:hover, .dropzone.drag-over {
+      border-color: var(--brand-primary);
+      background: rgba(244, 63, 94, 0.08);
+    }
+
+    .dropzone-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+    }
+
+    .dropzone-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dropzone-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.2);
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(5, 8, 15, 0.85);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .preview-bar-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .preview-bar-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Input Prompt Controls */
+    .prompt-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .prompt-input-field {
+      width: 100%;
+      padding: 1rem 2.8rem 1rem 2.8rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.95rem;
+    }
+
+    .prompt-icon-left {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-subtle);
+      pointer-events: none;
+    }
+
+    .prompt-btn-clear {
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-subtle);
+      cursor: pointer;
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .prompt-btn-clear:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .action-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-text {
+      background: transparent;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.2s;
+    }
+    .btn-text-amber { color: var(--accent-amber); }
+    .btn-text-amber:hover { color: #fcd34d; }
+    .btn-text-pink { color: #f472b6; }
+    .btn-text-pink:hover { color: #fbcfe8; }
+
+    /* Preset Style Pills */
+    .styles-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .style-pill {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.85rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+    .style-pill:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-main);
+    }
+    .style-pill.active {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+    }
+
+    /* Aspect Ratio Grid */
+    .ratio-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+    }
+
+    @media (max-width: 640px) {
+      .ratio-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .ratio-btn {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 0.65rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .ratio-btn:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-main);
+    }
+    .ratio-btn.active {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+    }
+
+    .ratio-box {
+      border: 2px solid currentColor;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* Primary Generate Button */
+    .btn-generate {
+      width: 100%;
+      padding: 1.1rem;
+      border-radius: var(--radius-lg);
+      border: none;
+      background: linear-gradient(135deg, #e11d48, #f43f5e, #f59e0b);
+      background-size: 200% 200%;
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.5);
+      transition: all 0.3s ease;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -4px rgba(244, 63, 94, 0.65);
+      background-position: right center;
+    }
+    .btn-generate:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Output & Preview Display */
+    .preview-container {
+      border-radius: var(--radius-xl);
+      padding: 2rem 1.5rem;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .placeholder-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      max-width: 380px;
+    }
+
+    .placeholder-emoji {
+      font-size: 3.5rem;
+      animation: floatAnim 4s ease-in-out infinite;
+    }
+
+    @keyframes floatAnim {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Loading Spinner & Status */
+    .loading-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .spinner-ring {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+    .spinner-ring div {
+      box-sizing: border-box;
+      display: block;
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      border: 4px solid var(--brand-primary);
+      border-radius: 50%;
+      animation: spinnerRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      border-color: var(--brand-primary) transparent transparent transparent;
+    }
+    @keyframes spinnerRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-status-text {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fca5a5;
+      animation: pulseText 1.5s infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Active Generated Image View */
+    .result-wrap {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .img-display-frame {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .img-display-frame img {
+      width: 100%;
+      max-height: 600px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .result-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: rgba(10, 15, 28, 0.8);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      border-radius: var(--radius-md);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn-action-primary {
+      background: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 4px 15px var(--brand-glow);
+    }
+    .btn-action-primary:hover {
+      background: var(--brand-hover);
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .gallery-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 15, 28, 0.6);
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .gallery-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+
+    .gallery-card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-card-body {
+      padding: 0.65rem;
+    }
+
+    .gallery-card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-main);
+    }
+
+    .gallery-card-meta {
+      font-size: 0.65rem;
+      color: var(--text-subtle);
+      margin-top: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 7, 12, 0.85);
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      transition: opacity 0.2s ease;
+    }
+    .gallery-card:hover .gallery-overlay {
+      opacity: 1;
+    }
+
+    /* Modal / Lightbox */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .modal-img {
+      max-height: 75vh;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 110;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--brand-primary);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    .app-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-subtle);
+      margin-top: 3rem;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
+<body>
 
-<body class="bg-gradient-animated text-slate-100 min-h-screen font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col justify-between relative overflow-x-hidden">
-
-  <!-- Ambient Light Orbs -->
-  <div class="fixed top-[-100px] left-[-100px] w-96 h-96 bg-brand-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow"></div>
-  <div class="fixed bottom-[-100px] right-[-100px] w-96 h-96 bg-accent-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-4 py-3 sm:px-8">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-pink-500 to-amber-400 flex items-center justify-center shadow-lg shadow-brand-500/30 text-white font-extrabold text-xl font-heading">
-          🤌
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-2xl font-black font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-brand-400">
-              Che Vuò?
-            </h1>
-            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
-              Free & Illimitato
-            </span>
+  <header class="app-header glass-card">
+    <div class="header-content">
+      <div class="brand-logo-wrap">
+        <div class="brand-icon">🤌</div>
+        <div class="brand-title-wrap">
+          <div style="display: flex; align-items: center;">
+            <h1>Che Vuò?</h1>
+            <span class="brand-badge">Gratis & Illimitato</span>
           </div>
-          <p class="text-xs text-brand-400/90 font-semibold tracking-wide">
-            Powered by Angelo Martelli
-          </p>
+          <p class="brand-sub">Powered by Angelo Martelli</p>
         </div>
       </div>
-
-      <div class="flex items-center gap-3">
-        <a href="#history-section" class="text-xs sm:text-sm px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 transition flex items-center gap-2 border border-slate-700/60 font-medium">
-          <i class="fa-solid fa-clock-rotate-left text-brand-400"></i>
-          <span class="hidden sm:inline">Galleria</span>
-          <span id="history-badge" class="bg-brand-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">0</span>
+      <div>
+        <a href="#gallery-section" class="btn-action" style="text-decoration: none;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span class="desktop-only">Galleria</span>
+          <span id="history-counter" style="background: var(--brand-primary); color: white; padding: 1px 6px; border-radius: 10px; font-size: 0.65rem;">0</span>
         </a>
       </div>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow flex flex-col gap-8 relative z-10">
-    
-    <!-- Hero Header -->
-    <div class="text-center max-w-3xl mx-auto space-y-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold uppercase tracking-wider">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Trasforma le tue idee in immagini senza limiti
-      </div>
-      <h2 class="text-3xl sm:text-5xl font-black font-heading tracking-tight text-white leading-tight">
-        Quale immagine desideri oggi? <br class="hidden sm:inline" /><span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-pink-400 to-amber-300">Dillo a "Che Vuò!"</span>
-      </h2>
-      <p class="text-slate-400 text-sm sm:text-base max-w-xl mx-auto font-medium">
-        Digita una parola, descrivi una scena o carica una tua foto da trasformare. Nessun account o API Key richiesta.
-      </p>
-      <div class="text-xs font-bold text-slate-500 pt-1">
-        Piattaforma creata con ❤️ • <span class="text-slate-300">Powered by Angelo Martelli</span>
-      </div>
-    </div>
+  <main class="main-container">
 
-    <!-- Main Workspace Form Card -->
-    <section class="glass-card rounded-3xl p-5 sm:p-8 shadow-2xl space-y-7 border border-slate-800/80">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-tag">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7.5 5.6L10 0l2.5 5.6L18 8l-5.5 2.4L10 16 7.5 10.4 2 8l5.5-2.4zm12 9.8L21 12l1.5 3.4L26 17l-3.5 1.6L21 22l-1.5-3.4L16 17l3.5-1.6z"/></svg>
+        Nessun Account • Zero Limiti
+      </div>
+      <h2 class="hero-title">Che Immagine Desideri? <br><span>Dillo a "Che Vuò!"</span></h2>
+      <p class="hero-desc">Inserisci una descrizione, seleziona uno stile oppure carica una foto di partenza per la trasformazione Image-to-Image.</p>
+    </section>
+
+    <!-- Workspace Form Card -->
+    <section class="workspace-card glass-card">
       
-      <!-- Source Image Upload Section (Image-to-Image) -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <label class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2 font-heading">
-            <i class="fa-solid fa-image text-brand-400"></i> Immagine di Partenza (Opzionale per Image-to-Image)
-          </label>
-          <span class="text-[11px] text-slate-400">Per modificare o fondere una tua foto</span>
+      <!-- Source Image Dropzone (Image-to-Image) -->
+      <div>
+        <div class="section-label">
+          <div class="section-label-left">
+            <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            1. Immagine di Sorgente (Opzionale per Image-to-Image)
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-subtle);">Trascina o Seleziona</span>
         </div>
 
-        <div id="source-image-dropzone" class="relative glass-card rounded-2xl border-2 border-dashed border-slate-700/80 hover:border-brand-500/60 p-4 transition-all text-center group cursor-pointer">
-          <input type="file" id="source-image-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleSourceImageUpload(event)">
+        <div id="dropzone" class="dropzone">
+          <input type="file" id="file-input" accept="image/*" class="dropzone-input" onchange="handleFileSelect(event)">
           
-          <!-- Default Upload State -->
-          <div id="upload-placeholder" class="space-y-2 py-3">
-            <div class="w-12 h-12 mx-auto rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 group-hover:scale-110 transition">
-              <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+          <div id="dropzone-placeholder" class="dropzone-content">
+            <div class="dropzone-icon-wrap">
+              <svg class="svg-icon" style="width:22px; height:22px" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
             </div>
-            <div class="space-y-0.5">
-              <p class="text-xs sm:text-sm font-semibold text-slate-300">Trascina un'immagine qui oppure <span class="text-brand-400 underline">sfoglia dal dispositivo</span></p>
-              <p class="text-[11px] text-slate-500">Supporta PNG, JPG, WEBP (Max 10MB)</p>
-            </div>
+            <p style="font-size: 0.85rem; font-weight: 600;">Carica un'immagine da trasformare o fondere</p>
+            <p style="font-size: 0.7rem; color: var(--text-subtle);">Formati JPG, PNG, WEBP supportati</p>
           </div>
 
-          <!-- Preview Loaded Image State -->
-          <div id="upload-preview-container" class="hidden relative flex items-center justify-between bg-slate-900/90 p-3 rounded-xl border border-slate-700">
-            <div class="flex items-center gap-3">
-              <img id="upload-preview-img" src="" alt="Sorgente" class="w-16 h-16 object-cover rounded-xl border border-slate-700 shadow-md">
-              <div class="text-left">
-                <p id="upload-filename" class="text-xs font-bold text-slate-200 truncate max-w-[200px] sm:max-w-xs"></p>
-                <p class="text-[11px] text-emerald-400 flex items-center gap-1 font-medium mt-0.5">
-                  <i class="fa-solid fa-circle-check"></i> Immagine sorgente pronta per la trasformazione
-                </p>
+          <div id="dropzone-preview" class="preview-bar hidden">
+            <div class="preview-bar-info">
+              <img id="source-img-preview" src="" alt="Sorgente" class="preview-bar-img">
+              <div style="text-align: left;">
+                <p id="source-img-name" style="font-size: 0.8rem; font-weight: 700; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+                <p style="font-size: 0.7rem; color: #34d399;">✓ Immagine pronta per la trasformazione</p>
               </div>
             </div>
-            <button type="button" onclick="removeSourceImage(event)" class="z-20 p-2.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition" title="Rimuovi immagine">
-              <i class="fa-solid fa-trash-can"></i>
+            <button type="button" onclick="removeSourceImage(event)" class="btn-action" style="padding: 0.4rem 0.6rem; color: #f87171;" title="Rimuovi sorgente">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Text Prompt Input & Magic AI Enhancers -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <label class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2 font-heading">
-            <i class="fa-solid fa-pen-nib text-brand-400"></i> Descrivi ciò che desideri o inserisci una parola
-          </label>
-
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="generateRandomPrompt()" class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition font-semibold" title="Ispirazione casuale">
-              <i class="fa-solid fa-dice text-amber-400"></i> <span class="hidden sm:inline">Ispirami</span>
+      <!-- Prompt Text Input -->
+      <div>
+        <div class="section-label">
+          <div class="section-label-left">
+            <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            2. Descrivi l'immagine o digita una parola
+          </div>
+          <div class="action-links">
+            <button type="button" onclick="insertRandomPrompt()" class="btn-text btn-text-amber">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.25 10.75c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm0 6c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm4.75-3c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm4.75 3c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm0-6c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/></svg>
+              Ispirami
             </button>
-            <span class="text-slate-700">|</span>
-            <button type="button" onclick="enhancePrompt()" id="enhance-btn" class="text-xs text-pink-400 hover:text-pink-300 flex items-center gap-1.5 transition font-semibold" title="Migliora la tua richiesta con dettagli artistici">
-              <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i> <span class="hidden sm:inline">Migliora Prompt AI</span>
+            <span>|</span>
+            <button type="button" onclick="enhancePrompt()" class="btn-text btn-text-pink">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7.5 5.6L10 0l2.5 5.6L18 8l-5.5 2.4L10 16 7.5 10.4 2 8l5.5-2.4zm12 9.8L21 12l1.5 3.4L26 17l-3.5 1.6L21 22l-1.5-3.4L16 17l3.5-1.6z"/></svg>
+              Migliora AI
             </button>
           </div>
         </div>
 
-        <div class="relative flex-grow">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-            <i class="fa-solid fa-quote-left"></i>
+        <div class="prompt-input-wrap">
+          <div class="prompt-icon-left">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/></svg>
           </div>
           <input 
             type="text" 
             id="prompt-input" 
-            placeholder="Es. Vesuvio, gatto astronauta, galassia, pizza stellare..."
-            class="w-full pl-11 pr-10 py-4 rounded-2xl glass-input text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none transition font-medium"
-            onkeydown="if(event.key === 'Enter') generateImage()"
+            placeholder="Es. Vesuvio, gatto astronauta, galassia, pizza stellare..." 
+            class="glass-input prompt-input-field"
+            onkeydown="if(event.key === 'Enter') startGeneration()"
+            oninput="toggleClearBtn()"
           />
-          <button 
-            onclick="clearPrompt()" 
-            id="clear-btn" 
-            class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition"
-            title="Cancella testo"
-          >
-            <i class="fa-solid fa-xmark text-base"></i>
+          <button type="button" id="clear-prompt-btn" onclick="clearPrompt()" class="prompt-btn-clear hidden" title="Cancella testo">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- Quick Style Presets -->
-      <div class="space-y-2.5">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2 font-heading">
-          <i class="fa-solid fa-palette text-brand-400"></i> Scegli uno Stile Visivo
-        </label>
-        <div class="flex flex-wrap gap-2.5" id="style-presets">
+      <!-- Style Selectors -->
+      <div>
+        <div class="section-label">
+          <div class="section-label-left">
+            <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.54 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+            3. Seleziona uno Stile Visivo
+          </div>
+        </div>
+        <div id="styles-grid" class="styles-grid">
           <!-- Populated dynamically via JS -->
         </div>
       </div>
 
       <!-- Aspect Ratio Controls -->
-      <div class="space-y-2.5">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2 font-heading">
-          <i class="fa-solid fa-border-all text-brand-400"></i> Formato Immagine (Aspect Ratio)
-        </label>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="aspect-ratio-selector">
-          <button data-width="1024" data-height="1024" onclick="setDimensions(1024, 1024, '1:1')" class="ratio-btn active glass-card p-3 rounded-xl border border-brand-500/80 bg-brand-500/20 text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold transition hover:border-brand-500">
-            <div class="w-4 h-4 border-2 border-current rounded-sm"></div>
-            <span>1:1 Quadrato</span>
+      <div>
+        <div class="section-label">
+          <div class="section-label-left">
+            <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>
+            4. Formato Immagine (Aspect Ratio)
+          </div>
+        </div>
+        <div class="ratio-grid">
+          <button type="button" onclick="setRatio(1024, 1024, '1:1', this)" class="ratio-btn active">
+            <span class="ratio-box" style="width: 14px; height: 14px;"></span> 1:1 Quadrato
           </button>
-          <button data-width="1280" data-height="720" onclick="setDimensions(1280, 720, '16:9')" class="ratio-btn glass-card p-3 rounded-xl border border-slate-700/60 hover:border-slate-500 text-slate-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold transition">
-            <div class="w-5 h-3 border-2 border-current rounded-sm"></div>
-            <span>16:9 Orizzontale</span>
+          <button type="button" onclick="setRatio(1280, 720, '16:9', this)" class="ratio-btn">
+            <span class="ratio-box" style="width: 18px; height: 10px;"></span> 16:9 Orizzontale
           </button>
-          <button data-width="720" data-height="1280" onclick="setDimensions(720, 1280, '9:16')" class="ratio-btn glass-card p-3 rounded-xl border border-slate-700/60 hover:border-slate-500 text-slate-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold transition">
-            <div class="w-3 h-5 border-2 border-current rounded-sm"></div>
-            <span>9:16 Storie/Reels</span>
+          <button type="button" onclick="setRatio(720, 1280, '9:16', this)" class="ratio-btn">
+            <span class="ratio-box" style="width: 10px; height: 18px;"></span> 9:16 Storie
           </button>
-          <button data-width="1024" data-height="768" onclick="setDimensions(1024, 768, '4:3')" class="ratio-btn glass-card p-3 rounded-xl border border-slate-700/60 hover:border-slate-500 text-slate-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold transition">
-            <div class="w-4 h-3 border-2 border-current rounded-sm"></div>
-            <span>4:3 Standard</span>
+          <button type="button" onclick="setRatio(1024, 768, '4:3', this)" class="ratio-btn">
+            <span class="ratio-box" style="width: 16px; height: 12px;"></span> 4:3 Standard
           </button>
         </div>
       </div>
 
-      <!-- Generate Action Button -->
-      <button 
-        id="generate-btn" 
-        onclick="generateImage()" 
-        class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-600 via-pink-600 to-amber-500 hover:from-brand-500 hover:via-pink-500 hover:to-amber-400 active:scale-[0.99] text-white font-extrabold text-lg shadow-xl shadow-brand-600/30 transition-all flex items-center justify-center gap-3 cursor-pointer glow-effect font-heading"
-      >
-        <i class="fa-solid fa-sparkles text-xl"></i>
-        <span id="generate-btn-text">Genera Immagine Ora</span>
+      <!-- Main Generate Button -->
+      <button type="button" id="generate-btn" onclick="startGeneration()" class="btn-generate">
+        <svg class="svg-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M7.5 5.6L10 0l2.5 5.6L18 8l-5.5 2.4L10 16 7.5 10.4 2 8l5.5-2.4zm12 9.8L21 12l1.5 3.4L26 17l-3.5 1.6L21 22l-1.5-3.4L16 17l3.5-1.6z"/></svg>
+        <span id="generate-btn-label">Genera Immagine Ora</span>
       </button>
 
     </section>
 
-    <!-- Preview Section -->
-    <section id="preview-section" class="w-full">
-      <div class="glass-card rounded-3xl p-5 sm:p-8 min-h-[420px] flex flex-col items-center justify-center text-center relative overflow-hidden border border-slate-800/80">
-        
-        <!-- Placeholder Empty State -->
-        <div id="preview-placeholder" class="space-y-4 py-10 max-w-sm">
-          <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-tr from-brand-500/20 to-pink-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 text-3xl animate-float">
-            🤌
-          </div>
-          <div class="space-y-1.5">
-            <h3 class="text-lg font-bold text-slate-200 font-heading">Che Vuò creare?</h3>
-            <p class="text-xs text-slate-400 font-medium">Scrivi una parola o carica un'immagine e premi "Genera Immagine Ora".</p>
-          </div>
-        </div>
-
-        <!-- Loading Spinner -->
-        <div id="preview-loading" class="hidden space-y-6 py-12">
-          <div class="relative w-24 h-24 mx-auto">
-            <div class="absolute inset-0 rounded-full border-4 border-brand-500/20 animate-ping"></div>
-            <div class="w-24 h-24 rounded-full border-4 border-brand-500 border-t-transparent animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center text-brand-400 text-2xl font-bold">
-              🤌
-            </div>
-          </div>
-          <div class="space-y-1.5">
-            <h3 class="text-lg font-bold text-brand-300 animate-pulse font-heading">Che Vuò sta generando la tua opera...</h3>
-            <p class="text-xs text-slate-400 font-medium">Sintesi visiva IA in corso.</p>
-          </div>
-        </div>
-
-        <!-- Active Generated Result View -->
-        <div id="preview-result" class="hidden w-full space-y-5">
-          <div class="relative group max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-slate-700/80 bg-black/50">
-            <img 
-              id="generated-img" 
-              src="" 
-              alt="Immagine generata" 
-              class="w-full h-auto max-h-[650px] object-contain mx-auto transition duration-300"
-            />
-            
-            <!-- Hover Actions Overlay -->
-            <div class="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 p-4">
-              <button onclick="openModal(currentActiveImage.url, currentActiveImage.prompt)" class="p-3.5 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-2xl transition transform hover:scale-110" title="Ingrandisci">
-                <i class="fa-solid fa-expand text-lg"></i>
-              </button>
-              <button onclick="downloadActiveImage()" class="p-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl transition transform hover:scale-110 shadow-lg shadow-brand-600/50" title="Scarica">
-                <i class="fa-solid fa-download text-lg"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Active Meta & Action Bar -->
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-left max-w-3xl mx-auto">
-            <div class="space-y-1 w-full sm:w-auto">
-              <p id="active-prompt-text" class="text-xs sm:text-sm font-semibold text-slate-200 line-clamp-2"></p>
-              <span id="active-meta-text" class="text-[11px] text-slate-400 font-medium block"></span>
-            </div>
-            
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
-              <button onclick="useActiveAsSource()" class="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold transition border border-amber-500/30 flex items-center gap-1.5">
-                <i class="fa-solid fa-arrows-rotate"></i> Usa come Sorgente
-              </button>
-              <button onclick="downloadActiveImage()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-md shadow-brand-600/30">
-                <i class="fa-solid fa-download"></i> Scarica
-              </button>
-            </div>
-          </div>
-        </div>
-
+    <!-- Display / Result Section -->
+    <section class="preview-container glass-card">
+      
+      <!-- Placeholder Box -->
+      <div id="preview-placeholder" class="placeholder-box">
+        <div class="placeholder-emoji">🤌</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800;">Che Vuò creare oggi?</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Scrivi una richiesta o carica una foto di partenza e clicca "Genera Immagine Ora".</p>
       </div>
+
+      <!-- Loading State Box -->
+      <div id="preview-loading" class="loading-box hidden">
+        <div class="spinner-ring"><div></div><div></div><div></div><div></div></div>
+        <p id="loading-status" class="loading-status-text">Sto impastando l'immagine...</p>
+        <p style="font-size: 0.75rem; color: var(--text-subtle);">Elaborazione visiva via Pollinations AI in corso</p>
+      </div>
+
+      <!-- Active Result Display Box -->
+      <div id="preview-result" class="result-wrap hidden">
+        <div class="img-display-frame">
+          <img id="active-generated-img" src="" alt="Immagine generata" onload="onImageLoadedSuccess()" onerror="onImageLoadedError()">
+        </div>
+
+        <div class="result-controls">
+          <div>
+            <p id="active-prompt-display" style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);"></p>
+            <p id="active-meta-display" style="font-size: 0.7rem; color: var(--text-subtle); margin-top: 2px;"></p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" onclick="useActiveAsSource()" class="btn-action" title="Usa come immagine di partenza per la prossima generazione">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8C6.25 13.93 6 12.99 6 12c0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.45.87.7 1.81.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+              Usa Sorgente
+            </button>
+            <button type="button" onclick="openLightboxModal()" class="btn-action" title="Visualizza a schermo intero">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              Ingrandisci
+            </button>
+            <button type="button" onclick="downloadActiveImage()" class="btn-action btn-action-primary" title="Scarica l'immagine nel tuo dispositivo">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Scarica
+            </button>
+          </div>
+        </div>
+      </div>
+
     </section>
 
-    <!-- History Section -->
-    <section id="history-section" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2.5">
-          <i class="fa-solid fa-images text-brand-400 text-lg"></i>
-          <h3 class="text-xl font-bold text-white font-heading">Galleria Personale</h3>
-        </div>
-        <button onclick="clearHistory()" id="clear-history-btn" class="text-xs text-slate-400 hover:text-red-400 transition hidden flex items-center gap-1.5 font-semibold">
-          <i class="fa-solid fa-trash-can"></i> Svuota Cronologia
+    <!-- Gallery Section -->
+    <section id="gallery-section">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+          <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H9l2-2.71zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
+          Galleria Immagini Create
+        </h3>
+        <button type="button" id="clear-gallery-btn" onclick="clearGallery()" class="btn-action hidden" style="color: #f87171;">
+          Svuota Galleria
         </button>
       </div>
 
-      <!-- History Grid -->
-      <div id="history-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
-        <!-- Dynamic History Items -->
+      <div id="gallery-grid" class="gallery-grid">
+        <!-- Populated via JS -->
       </div>
 
-      <!-- Empty History View -->
-      <div id="history-empty" class="text-center py-10 glass-card rounded-2xl border border-slate-800/80">
-        <p class="text-xs sm:text-sm text-slate-500 font-medium">Nessuna immagine salvata finora. Le tue immagini create appariranno qui.</p>
+      <div id="gallery-empty" class="glass-card" style="padding: 2rem; text-align: center; border-radius: var(--radius-lg);">
+        <p style="font-size: 0.85rem; color: var(--text-subtle);">La tua galleria personale è vuota. Le immagini generate appariranno qui.</p>
       </div>
     </section>
 
   </main>
 
-  <!-- Lightbox Modal -->
-  <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4">
-    <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-2xl w-11 h-11 rounded-2xl bg-slate-800/80 flex items-center justify-center transition border border-slate-700">
-      <i class="fa-solid fa-xmark"></i>
+  <!-- Modal Lightbox -->
+  <div id="modal" class="modal-backdrop" onclick="closeLightboxModal()">
+    <button class="modal-close" onclick="closeLightboxModal()">
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </button>
-    <div class="max-w-4xl w-full max-h-[90vh] flex flex-col items-center justify-center gap-4">
-      <img id="modal-img" src="" alt="Vista Ingrandita" class="max-h-[75vh] w-auto object-contain rounded-2xl shadow-2xl border border-slate-800" />
-      <p id="modal-caption" class="text-xs sm:text-sm text-slate-300 text-center max-w-2xl px-4 line-clamp-3 font-medium"></p>
-      <div class="flex gap-3">
-        <button id="modal-download-btn" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
-          <i class="fa-solid fa-download"></i> Scarica Immagine
-        </button>
-      </div>
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <img id="modal-img" src="" alt="Schermo intero" class="modal-img">
+      <p id="modal-caption" style="font-size: 0.85rem; color: var(--text-muted); text-align: center;"></p>
+      <button type="button" onclick="downloadActiveImage()" class="btn-action btn-action-primary">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Scarica Ora
+      </button>
     </div>
   </div>
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 glass-card bg-slate-900/95 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-brand-500/40 flex items-center gap-3">
-    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
-    <span id="toast-message" class="text-xs sm:text-sm font-semibold">Messaggio Notifica</span>
+  <!-- Toast Message -->
+  <div id="toast" class="toast">
+    <svg class="svg-icon" style="color: #34d399;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    <span id="toast-msg">Notifica</span>
   </div>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-800/80 glass-card py-8 mt-16 text-center text-xs text-slate-400 relative z-10">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 font-heading font-bold text-sm text-white">
-        <span>Che Vuò?</span>
-        <span class="text-slate-600">•</span>
-        <span class="text-brand-400 font-semibold text-xs">Powered by Angelo Martelli</span>
-      </div>
-      <p class="text-slate-500">© Che Vuò? - Generazione Immagini AI Libera e Gratuita.</p>
-    </div>
+  <footer class="app-footer glass-card">
+    <p><strong>Che Vuò?</strong> • Generazione Immagini AI Libera & Illimitata</p>
+    <p style="margin-top: 4px; color: #fb7185; font-weight: 600;">Powered by Angelo Martelli</p>
   </footer>
 
   <script>
-    // Style Presets Definitions
+    // Styles Presets
     const STYLES = [
-      { name: "Fotorealistico", icon: "fa-camera", prompt: "photorealistic, cinematic composition, ultra highly detailed, 8k resolution, sharp focus" },
-      { name: "Anime / Manga", icon: "fa-wand-magic-sparkles", prompt: "vibrant anime style, studio ghibli inspired art, vivid colors, detailed illustration" },
-      { name: "Cyberpunk", icon: "fa-city", prompt: "cyberpunk style, glowing neon lighting, futuristic dark city, cinematic atmosphere" },
-      { name: "3D Render", icon: "fa-cube", prompt: "octane 3d render, smooth textures, raytracing lighting, Pixar style" },
-      { name: "Acquerello", icon: "fa-paint-brush", prompt: "watercolor painting, soft fluid color washes, artistic ink outlines" },
-      { name: "Fantasy", icon: "fa-dragon", prompt: "epic fantasy artwork, mystical glowing magic, mythical landscape" }
+      { name: "Fotorealistico", prompt: "photorealistic, 8k resolution, cinematic lighting, hyperdetailed, sharp focus" },
+      { name: "Anime / Manga", prompt: "anime style, studio ghibli aesthetic, clean line art, vibrant colors, masterpiece" },
+      { name: "Cyberpunk", prompt: "cyberpunk, glowing neon lights, futuristic cityscape, dramatic reflections, high contrast" },
+      { name: "Fantasy 3D", prompt: "octane render 3d, pixar style, soft shadows, vibrant fantasy concept art" },
+      { name: "Acquerello", prompt: "watercolor painting, soft fluid color washes, artistic ink line details" },
+      { name: "Minimalist", prompt: "minimalist illustration, clean shapes, vector art, elegant pastel palette" },
+      { name: "Cinematic", prompt: "cinematic film still, anamorphic lens flare, moody color grading, dramatic depth of field" },
+      { name: "Digital Art", prompt: "digital painting, rich textures, fantasy artwork, expressive brush strokes" }
     ];
 
     // Inspiration Prompts
     const RANDOM_PROMPTS = [
-      "Vesuvio galattico con stelle brillanti",
-      "Gatto chef napoletano che prepara una pizza nello spazio",
-      "Vespa rossa vintage d'epoca volante nel 2099",
-      "Città incantata fatta interamente di cristalli viola fluttuanti",
-      "Un leone maestoso con la criniera fatta di nebulose cosmiche"
+      "Vesuvio galattico con stelle e nebulose brillanti",
+      "Gatto chef napoletano che inforna una pizza nello spazio",
+      "Vespa rossa vintage volante sopra la città del 2099",
+      "Castello di cristallo sospeso tra le nuvole al tramonto",
+      "Leone maestoso con la criniera fatta di aurora boreale",
+      "Robot antico ricoperto di muschio in una foresta incantata"
     ];
 
-    // Application State Variables
-    let selectedStyle = null;
+    // Loading status texts for realistic dynamic feedback
+    const LOADING_MESSAGES = [
+      "Sto impastando l'immagine...",
+      "Aggiungendo i dettagli artistici...",
+      "Applicando l'illuminazione...",
+      "Quasi pronta!"
+    ];
+
+    // App State
+    let selectedStyleIndex = null;
     let selectedWidth = 1024;
     let selectedHeight = 1024;
     let selectedRatioLabel = "1:1";
     let sourceImageBase64 = null;
-    let currentActiveImage = null;
-    let imageHistory = [];
+    let currentImageObject = null;
+    let galleryHistory = [];
+    let loadingInterval = null;
 
-    // DOM References
+    // DOM Elements
     const promptInput = document.getElementById('prompt-input');
-    const clearBtn = document.getElementById('clear-btn');
-    const stylePresetsContainer = document.getElementById('style-presets');
+    const clearPromptBtn = document.getElementById('clear-prompt-btn');
+    const dropzonePlaceholder = document.getElementById('dropzone-placeholder');
+    const dropzonePreview = document.getElementById('dropzone-preview');
+    const sourceImgPreview = document.getElementById('source-img-preview');
+    const sourceImgName = document.getElementById('source-img-name');
+    const generateBtnLabel = document.getElementById('generate-btn-label');
     const previewPlaceholder = document.getElementById('preview-placeholder');
     const previewLoading = document.getElementById('preview-loading');
     const previewResult = document.getElementById('preview-result');
-    const generatedImg = document.getElementById('generated-img');
-    const activePromptText = document.getElementById('active-prompt-text');
-    const activeMetaText = document.getElementById('active-meta-text');
-    const historyGrid = document.getElementById('history-grid');
-    const historyEmpty = document.getElementById('history-empty');
-    const historyBadge = document.getElementById('history-badge');
-    const clearHistoryBtn = document.getElementById('clear-history-btn');
-    const sourceImageInput = document.getElementById('source-image-input');
-    const uploadPlaceholder = document.getElementById('upload-placeholder');
-    const uploadPreviewContainer = document.getElementById('upload-preview-container');
-    const uploadPreviewImg = document.getElementById('upload-preview-img');
-    const uploadFilename = document.getElementById('upload-filename');
-    const generateBtnText = document.getElementById('generate-btn-text');
+    const activeGeneratedImg = document.getElementById('active-generated-img');
+    const activePromptDisplay = document.getElementById('active-prompt-display');
+    const activeMetaDisplay = document.getElementById('active-meta-display');
+    const loadingStatus = document.getElementById('loading-status');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const galleryEmpty = document.getElementById('gallery-empty');
+    const historyCounter = document.getElementById('history-counter');
+    const clearGalleryBtn = document.getElementById('clear-gallery-btn');
 
     // Startup Initialization
     window.addEventListener('DOMContentLoaded', () => {
       renderStyles();
       loadHistoryFromStorage();
-      setupDragAndDrop();
-
-      promptInput.addEventListener('input', () => {
-        if (promptInput.value.trim().length > 0) {
-          clearBtn.classList.remove('hidden');
-        } else {
-          clearBtn.classList.add('hidden');
-        }
-      });
+      setupDragDrop();
     });
 
-    function loadHistoryFromStorage() {
-      try {
-        const saved = localStorage.getItem('che_vuo_ai_history');
-        if (saved) {
-          imageHistory = JSON.parse(saved);
-          updateHistoryUI();
-        }
-      } catch (e) {
-        console.error("Errore nel caricamento della cronologia", e);
-      }
-    }
-
-    function saveHistoryToStorage() {
-      try {
-        const trimmed = imageHistory.slice(0, 25);
-        localStorage.setItem('che_vuo_ai_history', JSON.stringify(trimmed));
-      } catch (e) {
-        console.warn("Storage locale pieno", e);
-      }
-    }
-
     function renderStyles() {
-      stylePresetsContainer.innerHTML = STYLES.map((style, index) => `
-        <button 
-          type="button"
-          onclick="toggleStyle(${index})" 
-          data-index="${index}"
-          class="style-btn text-xs px-3.5 py-2 rounded-xl glass-card border border-slate-700/60 hover:border-slate-500 text-slate-300 flex items-center gap-2 transition font-medium active:scale-95"
-        >
-          <i class="fa-solid ${style.icon} text-brand-400"></i>
+      const container = document.getElementById('styles-grid');
+      container.innerHTML = STYLES.map((style, idx) => `
+        <button type="button" onclick="toggleStyle(${idx})" class="style-pill" id="style-pill-${idx}">
           <span>${style.name}</span>
         </button>
       `).join('');
     }
 
     function toggleStyle(index) {
-      const btns = document.querySelectorAll('.style-btn');
-      
-      if (selectedStyle === index) {
-        selectedStyle = null;
-        btns[index].classList.remove('bg-brand-600/30', 'border-brand-500', 'text-white');
-        btns[index].classList.add('glass-card', 'border-slate-700/60', 'text-slate-300');
+      const pills = document.querySelectorAll('.style-pill');
+      if (selectedStyleIndex === index) {
+        selectedStyleIndex = null;
+        pills[index].classList.remove('active');
       } else {
-        btns.forEach(btn => {
-          btn.classList.remove('bg-brand-600/30', 'border-brand-500', 'text-white');
-          btn.classList.add('glass-card', 'border-slate-700/60', 'text-slate-300');
-        });
-        
-        selectedStyle = index;
-        btns[index].classList.add('bg-brand-600/30', 'border-brand-500', 'text-white');
-        btns[index].classList.remove('glass-card', 'border-slate-700/60', 'text-slate-300');
+        pills.forEach(p => p.classList.remove('active'));
+        selectedStyleIndex = index;
+        pills[index].classList.add('active');
       }
     }
 
-    function setDimensions(w, h, label) {
+    function setRatio(w, h, label, btnElement) {
       selectedWidth = w;
       selectedHeight = h;
       selectedRatioLabel = label;
-      document.querySelectorAll('.ratio-btn').forEach(btn => {
-        if (btn.getAttribute('data-width') == w && btn.getAttribute('data-height') == h) {
-          btn.classList.add('border-brand-500/80', 'bg-brand-500/20', 'text-white');
-          btn.classList.remove('border-slate-700/60', 'text-slate-300');
-        } else {
-          btn.classList.remove('border-brand-500/80', 'bg-brand-500/20', 'text-white');
-          btn.classList.add('border-slate-700/60', 'text-slate-300');
-        }
-      });
+      document.querySelectorAll('.ratio-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
     }
 
-    function handleSourceImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        showToast("Carica un file immagine valido.", true);
-        return;
+    function toggleClearBtn() {
+      if (promptInput.value.trim().length > 0) {
+        clearPromptBtn.classList.remove('hidden');
+      } else {
+        clearPromptBtn.classList.add('hidden');
       }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        sourceImageBase64 = e.target.result;
-        uploadPreviewImg.src = sourceImageBase64;
-        uploadFilename.textContent = file.name;
-        uploadPlaceholder.classList.add('hidden');
-        uploadPreviewContainer.classList.remove('hidden');
-        generateBtnText.textContent = "Modifica & Trasforma Immagine";
-        showToast("Immagine sorgente caricata!");
-      };
-      reader.readAsDataURL(file);
     }
 
-    function removeSourceImage(event) {
-      if (event) event.stopPropagation();
-      sourceImageBase64 = null;
-      sourceImageInput.value = '';
-      uploadPreviewContainer.classList.add('hidden');
-      uploadPlaceholder.classList.remove('hidden');
-      generateBtnText.textContent = "Genera Immagine Ora";
-      showToast("Immagine sorgente rimossa.");
+    function clearPrompt() {
+      promptInput.value = '';
+      clearPromptBtn.classList.add('hidden');
+      promptInput.focus();
     }
 
-    function setupDragAndDrop() {
-      const dropzone = document.getElementById('source-image-dropzone');
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.add('drag-over');
-        }, false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('drag-over');
-        }, false);
-      });
-
-      dropzone.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files && files.length > 0) {
-          sourceImageInput.files = files;
-          handleSourceImageUpload({ target: { files: files } });
-        }
-      });
-    }
-
-    function generateRandomPrompt() {
-      const randomText = RANDOM_PROMPTS[Math.floor(Math.random() * RANDOM_PROMPTS.length)];
-      promptInput.value = randomText;
-      clearBtn.classList.remove('hidden');
-      showToast("Prompt d'ispirazione inserito!");
+    function insertRandomPrompt() {
+      const r = RANDOM_PROMPTS[Math.floor(Math.random() * RANDOM_PROMPTS.length)];
+      promptInput.value = r;
+      toggleClearBtn();
+      showToast("Prompt d'ispirazione caricato!");
     }
 
     function enhancePrompt() {
       const current = promptInput.value.trim();
       if (!current) {
-        showToast("Scrivi prima una parola da arricchire!", true);
+        showToast("Inserisci prima una parola da arricchire!");
         return;
       }
-
-      const additions = [
-        "cinematic lighting, ultra detailed, 8k resolution",
-        "vibrant colors, highly detailed digital art, masterpiece",
-        "dramatic light and shadows, intricate details, photorealistic"
+      const extras = [
+        "cinematic lighting, dramatic atmosphere, highly detailed, 8k resolution",
+        "masterpiece quality, vibrant color palette, intricate background, sharp focus",
+        "epic visual composition, elegant details, breathtaking aesthetic"
       ];
-      const randomAdd = additions[Math.floor(Math.random() * additions.length)];
-      promptInput.value = `${current}, ${randomAdd}`;
-      showToast("Prompt arricchito!");
+      const selectedAdd = extras[Math.floor(Math.random() * extras.length)];
+      promptInput.value = `${current}, ${selectedAdd}`;
+      toggleClearBtn();
+      showToast("Prompt arricchito con dettagli AI!");
     }
 
-    function clearPrompt() {
-      promptInput.value = '';
-      clearBtn.classList.add('hidden');
-      promptInput.focus();
+    function setupDragDrop() {
+      const dropzone = document.getElementById('dropzone');
+      ['dragenter', 'dragover'].forEach(name => {
+        dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); });
+      });
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
     }
 
-    function generateImage() {
-      const userPrompt = promptInput.value.trim();
+    function handleFileSelect(e) {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    }
 
-      if (!userPrompt && !sourceImageBase64) {
-        showToast("Scrivi una parola o carica un'immagine!", true);
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast("Seleziona un file immagine valido!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        sourceImageBase64 = e.target.result;
+        sourceImgPreview.src = sourceImageBase64;
+        sourceImgName.textContent = file.name;
+        dropzonePlaceholder.classList.add('hidden');
+        dropzonePreview.classList.remove('hidden');
+        generateBtnLabel.textContent = "Modifica & Trasforma Immagine";
+        showToast("Immagine sorgente pronta!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeSourceImage(e) {
+      if (e) e.stopPropagation();
+      sourceImageBase64 = null;
+      document.getElementById('file-input').value = '';
+      dropzonePreview.classList.add('hidden');
+      dropzonePlaceholder.classList.remove('hidden');
+      generateBtnLabel.textContent = "Genera Immagine Ora";
+      showToast("Immagine sorgente rimossa.");
+    }
+
+    function startGeneration() {
+      const userText = promptInput.value.trim();
+
+      if (!userText && !sourceImageBase64) {
+        showToast("Scrivi una parola o carica un'immagine di sorgente!");
         promptInput.focus();
         return;
       }
 
-      let finalPrompt = userPrompt || "masterpiece photo, highly detailed";
-      if (selectedStyle !== null && STYLES[selectedStyle]) {
-        finalPrompt += `, ${STYLES[selectedStyle].prompt}`;
+      let finalPrompt = userText || "creative artistic image, high detail";
+      if (selectedStyleIndex !== null) {
+        finalPrompt += `, ${STYLES[selectedStyleIndex].prompt}`;
       }
 
-      // UI States
+      // If source image is present, add descriptor hint
+      if (sourceImageBase64) {
+        finalPrompt += ", inspired by reference image layout and structure";
+      }
+
+      // UI Loading setup
       previewPlaceholder.classList.add('hidden');
       previewResult.classList.add('hidden');
       previewLoading.classList.remove('hidden');
 
       const genBtn = document.getElementById('generate-btn');
       genBtn.disabled = true;
-      genBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
-      const seed = Math.floor(Math.random() * 1000000);
+      // Dynamic Loading Status Text Loop
+      let msgIdx = 0;
+      loadingStatus.textContent = LOADING_MESSAGES[0];
+      clearInterval(loadingInterval);
+      loadingInterval = setInterval(() => {
+        msgIdx = (msgIdx + 1) % LOADING_MESSAGES.length;
+        loadingStatus.textContent = LOADING_MESSAGES[msgIdx];
+      }, 2500);
+
+      // Seed generator for reliable cache busting
+      const seed = Math.floor(Math.random() * 999999);
       const encodedPrompt = encodeURIComponent(finalPrompt);
       const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=${selectedWidth}&height=${selectedHeight}&seed=${seed}&nologo=true`;
 
-      // Preload image
-      const tempImg = new Image();
-      tempImg.onload = function() {
-        const newImage = {
-          id: Date.now(),
-          url: imageUrl,
-          prompt: userPrompt || "Trasformazione Immagine",
-          finalPrompt: finalPrompt,
-          ratio: selectedRatioLabel,
-          isImg2Img: !!sourceImageBase64,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        currentActiveImage = newImage;
-        imageHistory.unshift(newImage);
-        saveHistoryToStorage();
-
-        generatedImg.src = imageUrl;
-        activePromptText.textContent = `"${newImage.prompt}"`;
-        activeMetaText.textContent = `Formato: ${selectedRatioLabel} | Stile: ${selectedStyle !== null ? STYLES[selectedStyle].name : 'Nessuno'}`;
-
-        previewLoading.classList.add('hidden');
-        previewResult.classList.remove('hidden');
-
-        updateHistoryUI();
-        showToast("Immagine creata da Che Vuò!");
-
-        genBtn.disabled = false;
-        genBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+      // Set active image meta
+      currentImageObject = {
+        id: Date.now(),
+        url: imageUrl,
+        prompt: userText || "Trasformazione sorgente",
+        style: selectedStyleIndex !== null ? STYLES[selectedStyleIndex].name : "Nessuno",
+        ratio: selectedRatioLabel,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      tempImg.onerror = function() {
-        previewLoading.classList.add('hidden');
-        previewPlaceholder.classList.remove('hidden');
-        showToast("Errore durante la generazione. Riprova.", true);
+      // Set image source to trigger load
+      activeGeneratedImg.src = imageUrl;
+    }
 
-        genBtn.disabled = false;
-        genBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-      };
+    function onImageLoadedSuccess() {
+      clearInterval(loadingInterval);
+      previewLoading.classList.add('hidden');
+      previewResult.classList.remove('hidden');
 
-      tempImg.src = imageUrl;
+      document.getElementById('generate-btn').disabled = false;
+
+      activePromptDisplay.textContent = `"${currentImageObject.prompt}"`;
+      activeMetaDisplay.textContent = `Formato: ${currentImageObject.ratio} • Stile: ${currentImageObject.style}`;
+
+      // Save to gallery history
+      galleryHistory.unshift(currentImageObject);
+      saveHistoryToStorage();
+      updateGalleryUI();
+
+      showToast("Immagine creata con successo!");
+    }
+
+    function onImageLoadedError() {
+      clearInterval(loadingInterval);
+      previewLoading.classList.add('hidden');
+      previewPlaceholder.classList.remove('hidden');
+      document.getElementById('generate-btn').disabled = false;
+      showToast("Errore durante il caricamento. Riprova.");
     }
 
     function useActiveAsSource() {
-      if (!currentActiveImage) return;
-      sourceImageBase64 = currentActiveImage.url;
-      uploadPreviewImg.src = sourceImageBase64;
-      uploadFilename.textContent = `Immagine Che Vuò #${currentActiveImage.id}`;
-      uploadPlaceholder.classList.add('hidden');
-      uploadPreviewContainer.classList.remove('hidden');
-      generateBtnText.textContent = "Modifica & Trasforma Immagine";
+      if (!currentImageObject) return;
+      sourceImageBase64 = currentImageObject.url;
+      sourceImgPreview.src = sourceImageBase64;
+      sourceImgName.textContent = `Immagine #${currentImageObject.id}`;
+      dropzonePlaceholder.classList.add('hidden');
+      dropzonePreview.classList.remove('hidden');
+      generateBtnLabel.textContent = "Modifica & Trasforma Immagine";
       showToast("Immagine impostata come sorgente!");
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function useHistoryAsSource(id) {
-      const found = imageHistory.find(i => i.id === id);
-      if (!found) return;
-      sourceImageBase64 = found.url;
-      uploadPreviewImg.src = sourceImageBase64;
-      uploadFilename.textContent = `Galleria #${found.id}`;
-      uploadPlaceholder.classList.add('hidden');
-      uploadPreviewContainer.classList.remove('hidden');
-      generateBtnText.textContent = "Modifica & Trasforma Immagine";
-      showToast("Immagine della galleria impostata come sorgente!");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function updateHistoryUI() {
-      historyBadge.textContent = imageHistory.length;
-
-      if (imageHistory.length > 0) {
-        historyEmpty.classList.add('hidden');
-        clearHistoryBtn.classList.remove('hidden');
-
-        historyGrid.innerHTML = imageHistory.map((item) => `
-          <div class="glass-card rounded-2xl overflow-hidden group relative border border-slate-800 hover:border-brand-500/50 transition">
-            <div class="aspect-square w-full overflow-hidden bg-black/40">
-              <img src="${item.url}" alt="${item.prompt}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
-            </div>
-            <div class="p-3 space-y-1">
-              <p class="text-xs text-slate-200 font-semibold line-clamp-1">${item.prompt}</p>
-              <div class="flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                <span>${item.ratio}</span>
-                <span>${item.timestamp}</span>
-              </div>
-            </div>
-            <div class="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
-              <div class="flex gap-2">
-                <button onclick="openModal('${item.url}', '${item.prompt.replace(/'/g, "\\'")}')" class="p-2.5 bg-white/20 text-white rounded-xl hover:bg-white/30 transition" title="Ingrandisci">
-                  <i class="fa-solid fa-expand text-xs"></i>
-                </button>
-                <button onclick="downloadImageDirect('${item.url}', 'che-vuo-${item.id}.jpg')" class="p-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-500 transition shadow-md" title="Scarica">
-                  <i class="fa-solid fa-download text-xs"></i>
-                </button>
-              </div>
-              <button onclick="useHistoryAsSource(${item.id})" class="px-2.5 py-1 bg-amber-500/30 text-amber-300 hover:bg-amber-500/50 rounded-lg text-[10px] font-bold transition">
-                Usa come Sorgente
-              </button>
-            </div>
-          </div>
-        `).join('');
-      } else {
-        historyEmpty.classList.remove('hidden');
-        clearHistoryBtn.classList.add('hidden');
-        historyGrid.innerHTML = '';
-      }
-    }
-
-    function clearHistory() {
-      imageHistory = [];
-      localStorage.removeItem('che_vuo_ai_history');
-      updateHistoryUI();
-      showToast("Cronologia svuotata.");
-    }
-
     function downloadActiveImage() {
-      if (!currentActiveImage) return;
-      downloadImageDirect(currentActiveImage.url, `che-vuo-${currentActiveImage.id}.jpg`);
-    }
-
-    function downloadImageDirect(url, filename) {
-      fetch(url)
+      if (!currentImageObject) return;
+      const filename = `che-vuo-${currentImageObject.id}.jpg`;
+      
+      fetch(currentImageObject.url)
         .then(res => res.blob())
         .then(blob => {
           const a = document.createElement('a');
@@ -812,50 +1382,96 @@
           URL.revokeObjectURL(blobUrl);
           showToast("Download avviato!");
         })
-        .catch(() => showToast("Errore nel download. Prova ad aprire a schermo intero e salvare.", true));
+        .catch(() => {
+          // Fallback direct open
+          window.open(currentImageObject.url, '_blank');
+        });
     }
 
-    function openModal(imgUrl, caption) {
-      const modal = document.getElementById('lightbox-modal');
-      const modalImg = document.getElementById('modal-img');
-      const modalCaption = document.getElementById('modal-caption');
-      const modalDownloadBtn = document.getElementById('modal-download-btn');
-
-      modalImg.src = imgUrl;
-      modalCaption.textContent = caption;
-      modalDownloadBtn.onclick = () => downloadImageDirect(imgUrl, `che-vuo-image.jpg`);
-
-      modal.classList.remove('hidden');
+    function openLightboxModal() {
+      if (!currentImageObject) return;
+      document.getElementById('modal-img').src = currentImageObject.url;
+      document.getElementById('modal-caption').textContent = `"${currentImageObject.prompt}" (${currentImageObject.ratio})`;
+      document.getElementById('modal').classList.add('open');
     }
 
-    function closeModal() {
-      document.getElementById('lightbox-modal').classList.add('hidden');
+    function closeLightboxModal() {
+      document.getElementById('modal').classList.remove('open');
     }
 
-    function showToast(message, isError = false) {
-      const toast = document.getElementById('toast');
-      const toastMessage = document.getElementById('toast-message');
-      const toastIcon = document.getElementById('toast-icon');
-
-      toastMessage.textContent = message;
-      if (isError) {
-        toastIcon.className = "fa-solid fa-circle-exclamation text-rose-400 text-xl";
-      } else {
-        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl";
+    function loadHistoryFromStorage() {
+      try {
+        const saved = localStorage.getItem('chevuo_gallery_history');
+        if (saved) {
+          galleryHistory = JSON.parse(saved);
+          updateGalleryUI();
+        }
+      } catch (e) {
+        console.warn("localStorage non accessibile:", e);
       }
-
-      toast.classList.remove('translate-y-24', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-24', 'opacity-0');
-      }, 3500);
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
+    function saveHistoryToStorage() {
+      try {
+        const sliced = galleryHistory.slice(0, 30);
+        localStorage.setItem('chevuo_gallery_history', JSON.stringify(sliced));
+      } catch (e) {
+        console.warn("Errore salvataggio localStorage:", e);
+      }
+    }
+
+    function updateGalleryUI() {
+      historyCounter.textContent = galleryHistory.length;
+
+      if (galleryHistory.length > 0) {
+        galleryEmpty.classList.add('hidden');
+        clearGalleryBtn.classList.remove('hidden');
+
+        galleryGrid.innerHTML = galleryHistory.map((item) => `
+          <div class="gallery-card">
+            <img src="${item.url}" alt="${item.prompt}" class="gallery-card-img" loading="lazy">
+            <div class="gallery-card-body">
+              <p class="gallery-card-title">${item.prompt}</p>
+              <div class="gallery-card-meta">
+                <span>${item.ratio}</span>
+                <span>${item.timestamp}</span>
+              </div>
+            </div>
+            <div class="gallery-overlay">
+              <button type="button" onclick="viewHistoryItem('${item.url}', '${item.prompt.replace(/'/g, "\\'")}')" class="btn-action" style="padding: 0.4rem 0.75rem; font-size:0.7rem;">
+                Ingrandisci
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        galleryEmpty.classList.remove('hidden');
+        clearGalleryBtn.classList.add('hidden');
+        galleryGrid.innerHTML = '';
+      }
+    }
+
+    function viewHistoryItem(url, promptText) {
+      currentImageObject = { url, prompt: promptText, ratio: 'Galleria' };
+      openLightboxModal();
+    }
+
+    function clearGallery() {
+      galleryHistory = [];
+      try { localStorage.removeItem('chevuo_gallery_history'); } catch(e){}
+      updateGalleryUI();
+      showToast("Galleria svuotata.");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
   </script>
 </body>
 </html>
