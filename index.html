@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Che Vuò? - Powered by Angelo Martelli</title>
 
-  <!-- Inline SVG Favicon (Fixes 404 Favicon Error) -->
+  <!-- Inline SVG Favicon (Prevents 404 Favicon Error) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤌</text></svg>" />
 
-  <!-- Google Fonts for modern typography -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -55,7 +55,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-space: space-between;
       overflow-x: hidden;
       line-height: 1.5;
     }
@@ -76,7 +76,7 @@
       background: #334155;
     }
 
-    /* Ambient Glowing Orbs */
+    /* Ambient Orbs */
     .orb {
       position: fixed;
       border-radius: 50%;
@@ -105,7 +105,7 @@
       100% { opacity: 0.9; transform: scale(1.08); }
     }
 
-    /* Glassmorphism Components */
+    /* Glassmorphism Classes */
     .glass-card {
       background: var(--bg-card);
       backdrop-filter: blur(16px);
@@ -126,7 +126,7 @@
       box-shadow: 0 0 20px var(--brand-glow);
     }
 
-    /* Layout Containers */
+    /* Header */
     .app-header {
       position: sticky;
       top: 0;
@@ -204,7 +204,7 @@
       z-index: 10;
     }
 
-    /* Hero Section */
+    /* Hero */
     .hero-section {
       text-align: center;
       max-width: 700px;
@@ -249,7 +249,7 @@
       max-width: 540px;
     }
 
-    /* Main Card Form */
+    /* Workspace */
     .workspace-card {
       border-radius: var(--radius-xl);
       padding: 1.75rem;
@@ -285,7 +285,7 @@
       vertical-align: middle;
     }
 
-    /* Image Upload Dropzone */
+    /* Dropzone */
     .dropzone {
       border: 2px dashed rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-lg);
@@ -354,7 +354,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Input Prompt Controls */
+    /* Prompt Input */
     .prompt-input-wrap {
       position: relative;
       width: 100%;
@@ -418,7 +418,7 @@
     .btn-text-pink { color: #f472b6; }
     .btn-text-pink:hover { color: #fbcfe8; }
 
-    /* Preset Style Pills */
+    /* Styles Grid */
     .styles-grid {
       display: flex;
       flex-wrap: wrap;
@@ -495,7 +495,7 @@
       display: inline-block;
     }
 
-    /* Primary Generate Button */
+    /* Generate Button */
     .btn-generate {
       width: 100%;
       padding: 1.1rem;
@@ -526,7 +526,7 @@
       transform: none;
     }
 
-    /* Output & Preview Display */
+    /* Preview Output */
     .preview-container {
       border-radius: var(--radius-xl);
       padding: 2rem 1.5rem;
@@ -557,7 +557,7 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* Loading Spinner & Status */
+    /* Loading Spinner */
     .loading-box {
       display: flex;
       flex-direction: column;
@@ -600,7 +600,7 @@
       50% { opacity: 1; }
     }
 
-    /* Active Generated Image View */
+    /* Result Box */
     .result-wrap {
       width: 100%;
       max-width: 800px;
@@ -666,7 +666,7 @@
       background: var(--brand-hover);
     }
 
-    /* Gallery Grid */
+    /* Gallery */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -731,7 +731,7 @@
       opacity: 1;
     }
 
-    /* Modal / Lightbox */
+    /* Lightbox Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -785,7 +785,7 @@
       justify-content: center;
     }
 
-    /* Toast Notification */
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -825,6 +825,400 @@
       display: none !important;
     }
   </style>
+
+  <script>
+    // Global Constants
+    const STYLES = [
+      { name: "Fotorealistico", prompt: "photorealistic, 8k resolution, cinematic lighting, hyperdetailed, sharp focus" },
+      { name: "Anime / Manga", prompt: "anime style, studio ghibli aesthetic, clean line art, vibrant colors, masterpiece" },
+      { name: "Cyberpunk", prompt: "cyberpunk, glowing neon lights, futuristic cityscape, dramatic reflections, high contrast" },
+      { name: "Fantasy 3D", prompt: "octane render 3d, pixar style, soft shadows, vibrant fantasy concept art" },
+      { name: "Acquerello", prompt: "watercolor painting, soft fluid color washes, artistic ink line details" },
+      { name: "Synthwave", prompt: "synthwave style, 80s retro aesthetics, neon grid, sunset horizon, vibrant magenta and cyan" },
+      { name: "Minimalist", prompt: "minimalist illustration, clean shapes, vector art, elegant pastel palette" },
+      { name: "Cinematic", prompt: "cinematic film still, anamorphic lens flare, moody color grading, dramatic depth of field" }
+    ];
+
+    const RANDOM_PROMPTS = [
+      "Vesuvio galattico con stelle e nebulose brillanti",
+      "Gatto chef napoletano che inforna una pizza nello spazio",
+      "Vespa rossa vintage volante sopra la città del 2099",
+      "Castello di cristallo sospeso tra le nuvole al tramonto",
+      "Leone maestoso con la criniera fatta di aurora boreale",
+      "Robot antico ricoperto di muschio in una foresta incantata"
+    ];
+
+    const LOADING_MESSAGES = [
+      "Sto impastando l'immagine...",
+      "Aggiungendo i dettagli artistici...",
+      "Applicando l'illuminazione...",
+      "Quasi pronta!"
+    ];
+
+    // Global State Container
+    window.AppState = {
+      selectedStyleIndex: null,
+      selectedWidth: 1024,
+      selectedHeight: 1024,
+      selectedRatioLabel: "1:1",
+      sourceImageBase64: null,
+      currentImageObject: null,
+      galleryHistory: [],
+      loadingInterval: null
+    };
+
+    // Helper Utility: Show Toast Notification
+    window.showToast = function(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (toast && toastMsg) {
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    };
+
+    // Global Event Handler Explicit Declarations to satisfy strict inline JS callbacks
+    window.onImageLoadedSuccess = function() {
+      if (window.AppState.loadingInterval) clearInterval(window.AppState.loadingInterval);
+      
+      const loadingBox = document.getElementById('preview-loading');
+      const resultBox = document.getElementById('preview-result');
+      const generateBtn = document.getElementById('generate-btn');
+      const promptDisp = document.getElementById('active-prompt-display');
+      const metaDisp = document.getElementById('active-meta-display');
+
+      if (loadingBox) loadingBox.classList.add('hidden');
+      if (resultBox) resultBox.classList.remove('hidden');
+      if (generateBtn) generateBtn.disabled = false;
+
+      if (window.AppState.currentImageObject) {
+        if (promptDisp) promptDisp.textContent = `"${window.AppState.currentImageObject.prompt}"`;
+        if (metaDisp) metaDisp.textContent = `Formato: ${window.AppState.currentImageObject.ratio} • Stile: ${window.AppState.currentImageObject.style}`;
+        
+        window.AppState.galleryHistory.unshift(window.AppState.currentImageObject);
+        window.saveHistoryToStorage();
+        window.updateGalleryUI();
+      }
+
+      window.showToast("Immagine creata con successo!");
+    };
+
+    window.onImageLoadedError = function() {
+      if (window.AppState.loadingInterval) clearInterval(window.AppState.loadingInterval);
+      
+      const loadingBox = document.getElementById('preview-loading');
+      const placeholderBox = document.getElementById('preview-placeholder');
+      const generateBtn = document.getElementById('generate-btn');
+
+      if (loadingBox) loadingBox.classList.add('hidden');
+      if (placeholderBox) placeholderBox.classList.remove('hidden');
+      if (generateBtn) generateBtn.disabled = false;
+
+      window.showToast("Impossibile caricare l'immagine. Riprova tra poco.");
+    };
+
+    window.toggleStyle = function(index) {
+      const pills = document.querySelectorAll('.style-pill');
+      if (window.AppState.selectedStyleIndex === index) {
+        window.AppState.selectedStyleIndex = null;
+        if (pills[index]) pills[index].classList.remove('active');
+      } else {
+        pills.forEach(p => p.classList.remove('active'));
+        window.AppState.selectedStyleIndex = index;
+        if (pills[index]) pills[index].classList.add('active');
+      }
+    };
+
+    window.setRatio = function(w, h, label, btnElement) {
+      window.AppState.selectedWidth = w;
+      window.AppState.selectedHeight = h;
+      window.AppState.selectedRatioLabel = label;
+      document.querySelectorAll('.ratio-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+    };
+
+    window.toggleClearBtn = function() {
+      const input = document.getElementById('prompt-input');
+      const clearBtn = document.getElementById('clear-prompt-btn');
+      if (input && clearBtn) {
+        if (input.value.trim().length > 0) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+    };
+
+    window.clearPrompt = function() {
+      const input = document.getElementById('prompt-input');
+      const clearBtn = document.getElementById('clear-prompt-btn');
+      if (input) {
+        input.value = '';
+        if (clearBtn) clearBtn.classList.add('hidden');
+        input.focus();
+      }
+    };
+
+    window.insertRandomPrompt = function() {
+      const input = document.getElementById('prompt-input');
+      if (input) {
+        const randomItem = RANDOM_PROMPTS[Math.floor(Math.random() * RANDOM_PROMPTS.length)];
+        input.value = randomItem;
+        window.toggleClearBtn();
+        window.showToast("Prompt d'ispirazione aggiunto!");
+      }
+    };
+
+    window.enhancePrompt = function() {
+      const input = document.getElementById('prompt-input');
+      if (!input || !input.value.trim()) {
+        window.showToast("Inserisci prima una parola da arricchire!");
+        return;
+      }
+      const enhancements = [
+        "cinematic lighting, dramatic atmosphere, highly detailed, 8k resolution",
+        "masterpiece quality, vibrant color palette, intricate background, sharp focus",
+        "epic visual composition, elegant details, breathtaking aesthetic"
+      ];
+      const addition = enhancements[Math.floor(Math.random() * enhancements.length)];
+      input.value = `${input.value.trim()}, ${addition}`;
+      window.toggleClearBtn();
+      window.showToast("Prompt arricchito con AI!");
+    };
+
+    window.handleFileSelect = function(e) {
+      const files = e.target.files;
+      if (files && files.length > 0) window.processFile(files[0]);
+    };
+
+    window.processFile = function(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        window.showToast("Seleziona un file immagine valido!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        window.AppState.sourceImageBase64 = e.target.result;
+        
+        const previewImg = document.getElementById('source-img-preview');
+        const previewName = document.getElementById('source-img-name');
+        const placeholder = document.getElementById('dropzone-placeholder');
+        const previewBar = document.getElementById('dropzone-preview');
+        const btnLabel = document.getElementById('generate-btn-label');
+
+        if (previewImg) previewImg.src = window.AppState.sourceImageBase64;
+        if (previewName) previewName.textContent = file.name;
+        if (placeholder) placeholder.classList.add('hidden');
+        if (previewBar) previewBar.classList.remove('hidden');
+        if (btnLabel) btnLabel.textContent = "Modifica & Trasforma Immagine";
+        
+        window.showToast("Immagine sorgente caricata!");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.removeSourceImage = function(e) {
+      if (e) e.stopPropagation();
+      window.AppState.sourceImageBase64 = null;
+      
+      const fileInput = document.getElementById('file-input');
+      const placeholder = document.getElementById('dropzone-placeholder');
+      const previewBar = document.getElementById('dropzone-preview');
+      const btnLabel = document.getElementById('generate-btn-label');
+
+      if (fileInput) fileInput.value = '';
+      if (previewBar) previewBar.classList.add('hidden');
+      if (placeholder) placeholder.classList.remove('hidden');
+      if (btnLabel) btnLabel.textContent = "Genera Immagine Ora";
+
+      window.showToast("Immagine sorgente rimossa.");
+    };
+
+    window.startGeneration = function() {
+      const input = document.getElementById('prompt-input');
+      const userText = input ? input.value.trim() : '';
+
+      if (!userText && !window.AppState.sourceImageBase64) {
+        window.showToast("Scrivi una parola o carica un'immagine sorgente!");
+        if (input) input.focus();
+        return;
+      }
+
+      let finalPrompt = userText || "creative artistic artwork, hyperdetailed";
+      if (window.AppState.selectedStyleIndex !== null) {
+        finalPrompt += `, ${STYLES[window.AppState.selectedStyleIndex].prompt}`;
+      }
+
+      if (window.AppState.sourceImageBase64) {
+        finalPrompt += ", inspired by structure of reference image";
+      }
+
+      const placeholder = document.getElementById('preview-placeholder');
+      const resultBox = document.getElementById('preview-result');
+      const loadingBox = document.getElementById('preview-loading');
+      const genBtn = document.getElementById('generate-btn');
+      const loadingStatus = document.getElementById('loading-status');
+
+      if (placeholder) placeholder.classList.add('hidden');
+      if (resultBox) resultBox.classList.add('hidden');
+      if (loadingBox) loadingBox.classList.remove('hidden');
+      if (genBtn) genBtn.disabled = true;
+
+      let msgIndex = 0;
+      if (loadingStatus) loadingStatus.textContent = LOADING_MESSAGES[0];
+      if (window.AppState.loadingInterval) clearInterval(window.AppState.loadingInterval);
+      window.AppState.loadingInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+        if (loadingStatus) loadingStatus.textContent = LOADING_MESSAGES[msgIndex];
+      }, 2500);
+
+      const seed = Math.floor(Math.random() * 9999999);
+      const encodedPrompt = encodeURIComponent(finalPrompt);
+      const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=${window.AppState.selectedWidth}&height=${window.AppState.selectedHeight}&seed=${seed}&nologo=true`;
+
+      window.AppState.currentImageObject = {
+        id: Date.now(),
+        url: imageUrl,
+        prompt: userText || "Trasformazione visiva sorgente",
+        style: window.AppState.selectedStyleIndex !== null ? STYLES[window.AppState.selectedStyleIndex].name : "Standard",
+        ratio: window.AppState.selectedRatioLabel,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const activeImg = document.getElementById('active-generated-img');
+      if (activeImg) activeImg.src = imageUrl;
+    };
+
+    window.useActiveAsSource = function() {
+      if (!window.AppState.currentImageObject) return;
+      window.AppState.sourceImageBase64 = window.AppState.currentImageObject.url;
+
+      const previewImg = document.getElementById('source-img-preview');
+      const previewName = document.getElementById('source-img-name');
+      const placeholder = document.getElementById('dropzone-placeholder');
+      const previewBar = document.getElementById('dropzone-preview');
+      const btnLabel = document.getElementById('generate-btn-label');
+
+      if (previewImg) previewImg.src = window.AppState.sourceImageBase64;
+      if (previewName) previewName.textContent = `Generazione #${window.AppState.currentImageObject.id}`;
+      if (placeholder) placeholder.classList.add('hidden');
+      if (previewBar) previewBar.classList.remove('hidden');
+      if (btnLabel) btnLabel.textContent = "Modifica & Trasforma Immagine";
+
+      window.showToast("Immagine impostata come nuova sorgente!");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.downloadActiveImage = function() {
+      if (!window.AppState.currentImageObject) return;
+      const filename = `che-vuo-${window.AppState.currentImageObject.id}.jpg`;
+
+      fetch(window.AppState.currentImageObject.url)
+        .then(res => res.blob())
+        .then(blob => {
+          const a = document.createElement('a');
+          const blobUrl = URL.createObjectURL(blob);
+          a.href = blobUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+          window.showToast("Download completato!");
+        })
+        .catch(() => {
+          window.open(window.AppState.currentImageObject.url, '_blank');
+        });
+    };
+
+    window.openLightboxModal = function() {
+      if (!window.AppState.currentImageObject) return;
+      const modalImg = document.getElementById('modal-img');
+      const modalCaption = document.getElementById('modal-caption');
+      const modal = document.getElementById('modal');
+
+      if (modalImg) modalImg.src = window.AppState.currentImageObject.url;
+      if (modalCaption) modalCaption.textContent = `"${window.AppState.currentImageObject.prompt}" (${window.AppState.currentImageObject.ratio})`;
+      if (modal) modal.classList.add('open');
+    };
+
+    window.closeLightboxModal = function() {
+      const modal = document.getElementById('modal');
+      if (modal) modal.classList.remove('open');
+    };
+
+    window.saveHistoryToStorage = function() {
+      try {
+        const historySlice = window.AppState.galleryHistory.slice(0, 30);
+        localStorage.setItem('chevuo_gallery_history', JSON.stringify(historySlice));
+      } catch (e) {
+        console.warn("Spazio di archiviazione insufficiente:", e);
+      }
+    };
+
+    window.loadHistoryFromStorage = function() {
+      try {
+        const stored = localStorage.getItem('chevuo_gallery_history');
+        if (stored) {
+          window.AppState.galleryHistory = JSON.parse(stored);
+          window.updateGalleryUI();
+        }
+      } catch (e) {
+        console.warn("Impossibile caricare cronologia:", e);
+      }
+    };
+
+    window.updateGalleryUI = function() {
+      const counter = document.getElementById('history-counter');
+      const grid = document.getElementById('gallery-grid');
+      const emptyState = document.getElementById('gallery-empty');
+      const clearBtn = document.getElementById('clear-gallery-btn');
+
+      if (counter) counter.textContent = window.AppState.galleryHistory.length;
+
+      if (window.AppState.galleryHistory.length > 0) {
+        if (emptyState) emptyState.classList.add('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
+
+        if (grid) {
+          grid.innerHTML = window.AppState.galleryHistory.map((item, idx) => `
+            <div class="gallery-card">
+              <img src="${item.url}" alt="${item.prompt.replace(/"/g, '&quot;')}" class="gallery-card-img" loading="lazy">
+              <div class="gallery-card-body">
+                <p class="gallery-card-title">${item.prompt}</p>
+                <div class="gallery-card-meta">
+                  <span>${item.ratio}</span>
+                  <span>${item.timestamp}</span>
+                </div>
+              </div>
+              <div class="gallery-overlay">
+                <button type="button" onclick="window.viewGalleryItem(${idx})" class="btn-action" style="padding: 0.4rem 0.75rem; font-size:0.7rem;">
+                  Ingrandisci
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } else {
+        if (emptyState) emptyState.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.add('hidden');
+        if (grid) grid.innerHTML = '';
+      }
+    };
+
+    window.viewGalleryItem = function(index) {
+      const item = window.AppState.galleryHistory[index];
+      if (item) {
+        window.AppState.currentImageObject = item;
+        window.openLightboxModal();
+      }
+    };
+
+    window.clearAllHistory = function() {
+      window.AppState.galleryHistory = [];
+      try { localStorage.removeItem('chevuo_gallery_history'); } catch(e){}
+      window.updateGalleryUI();
+      window.showToast("Galleria svuotata.");
+    };
+  </script>
 </head>
 <body>
 
@@ -870,7 +1264,7 @@
     <!-- Workspace Form Card -->
     <section class="workspace-card glass-card">
       
-      <!-- Source Image Dropzone (Image-to-Image) -->
+      <!-- Source Image Upload (Image-to-Image) -->
       <div>
         <div class="section-label">
           <div class="section-label-left">
@@ -881,7 +1275,7 @@
         </div>
 
         <div id="dropzone" class="dropzone">
-          <input type="file" id="file-input" accept="image/*" class="dropzone-input" onchange="handleFileSelect(event)">
+          <input type="file" id="file-input" accept="image/*" class="dropzone-input" onchange="window.handleFileSelect(event)">
           
           <div id="dropzone-placeholder" class="dropzone-content">
             <div class="dropzone-icon-wrap">
@@ -899,14 +1293,14 @@
                 <p style="font-size: 0.7rem; color: #34d399;">✓ Immagine pronta per la trasformazione</p>
               </div>
             </div>
-            <button type="button" onclick="removeSourceImage(event)" class="btn-action" style="padding: 0.4rem 0.6rem; color: #f87171;" title="Rimuovi sorgente">
+            <button type="button" onclick="window.removeSourceImage(event)" class="btn-action" style="padding: 0.4rem 0.6rem; color: #f87171;" title="Rimuovi sorgente">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Prompt Text Input -->
+      <!-- Prompt Input -->
       <div>
         <div class="section-label">
           <div class="section-label-left">
@@ -914,12 +1308,12 @@
             2. Descrivi l'immagine o digita una parola
           </div>
           <div class="action-links">
-            <button type="button" onclick="insertRandomPrompt()" class="btn-text btn-text-amber">
+            <button type="button" onclick="window.insertRandomPrompt()" class="btn-text btn-text-amber">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.25 10.75c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm0 6c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm4.75-3c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm4.75 3c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm0-6c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/></svg>
               Ispirami
             </button>
             <span>|</span>
-            <button type="button" onclick="enhancePrompt()" class="btn-text btn-text-pink">
+            <button type="button" onclick="window.enhancePrompt()" class="btn-text btn-text-pink">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7.5 5.6L10 0l2.5 5.6L18 8l-5.5 2.4L10 16 7.5 10.4 2 8l5.5-2.4zm12 9.8L21 12l1.5 3.4L26 17l-3.5 1.6L21 22l-1.5-3.4L16 17l3.5-1.6z"/></svg>
               Migliora AI
             </button>
@@ -935,16 +1329,16 @@
             id="prompt-input" 
             placeholder="Es. Vesuvio, gatto astronauta, galassia, pizza stellare..." 
             class="glass-input prompt-input-field"
-            onkeydown="if(event.key === 'Enter') startGeneration()"
-            oninput="toggleClearBtn()"
+            onkeydown="if(event.key === 'Enter') window.startGeneration()"
+            oninput="window.toggleClearBtn()"
           />
-          <button type="button" id="clear-prompt-btn" onclick="clearPrompt()" class="prompt-btn-clear hidden" title="Cancella testo">
+          <button type="button" id="clear-prompt-btn" onclick="window.clearPrompt()" class="prompt-btn-clear hidden" title="Cancella testo">
             <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- Style Selectors -->
+      <!-- Style Selector -->
       <div>
         <div class="section-label">
           <div class="section-label-left">
@@ -952,12 +1346,10 @@
             3. Seleziona uno Stile Visivo
           </div>
         </div>
-        <div id="styles-grid" class="styles-grid">
-          <!-- Populated dynamically via JS -->
-        </div>
+        <div id="styles-grid" class="styles-grid"></div>
       </div>
 
-      <!-- Aspect Ratio Controls -->
+      <!-- Aspect Ratio -->
       <div>
         <div class="section-label">
           <div class="section-label-left">
@@ -966,30 +1358,30 @@
           </div>
         </div>
         <div class="ratio-grid">
-          <button type="button" onclick="setRatio(1024, 1024, '1:1', this)" class="ratio-btn active">
+          <button type="button" onclick="window.setRatio(1024, 1024, '1:1', this)" class="ratio-btn active">
             <span class="ratio-box" style="width: 14px; height: 14px;"></span> 1:1 Quadrato
           </button>
-          <button type="button" onclick="setRatio(1280, 720, '16:9', this)" class="ratio-btn">
+          <button type="button" onclick="window.setRatio(1280, 720, '16:9', this)" class="ratio-btn">
             <span class="ratio-box" style="width: 18px; height: 10px;"></span> 16:9 Orizzontale
           </button>
-          <button type="button" onclick="setRatio(720, 1280, '9:16', this)" class="ratio-btn">
+          <button type="button" onclick="window.setRatio(720, 1280, '9:16', this)" class="ratio-btn">
             <span class="ratio-box" style="width: 10px; height: 18px;"></span> 9:16 Storie
           </button>
-          <button type="button" onclick="setRatio(1024, 768, '4:3', this)" class="ratio-btn">
+          <button type="button" onclick="window.setRatio(1024, 768, '4:3', this)" class="ratio-btn">
             <span class="ratio-box" style="width: 16px; height: 12px;"></span> 4:3 Standard
           </button>
         </div>
       </div>
 
-      <!-- Main Generate Button -->
-      <button type="button" id="generate-btn" onclick="startGeneration()" class="btn-generate">
+      <!-- Primary Action Button -->
+      <button type="button" id="generate-btn" onclick="window.startGeneration()" class="btn-generate">
         <svg class="svg-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M7.5 5.6L10 0l2.5 5.6L18 8l-5.5 2.4L10 16 7.5 10.4 2 8l5.5-2.4zm12 9.8L21 12l1.5 3.4L26 17l-3.5 1.6L21 22l-1.5-3.4L16 17l3.5-1.6z"/></svg>
         <span id="generate-btn-label">Genera Immagine Ora</span>
       </button>
 
     </section>
 
-    <!-- Display / Result Section -->
+    <!-- Preview Container -->
     <section class="preview-container glass-card">
       
       <!-- Placeholder Box -->
@@ -999,17 +1391,17 @@
         <p style="font-size: 0.8rem; color: var(--text-muted);">Scrivi una richiesta o carica una foto di partenza e clicca "Genera Immagine Ora".</p>
       </div>
 
-      <!-- Loading State Box -->
+      <!-- Loading Spinner -->
       <div id="preview-loading" class="loading-box hidden">
         <div class="spinner-ring"><div></div><div></div><div></div><div></div></div>
         <p id="loading-status" class="loading-status-text">Sto impastando l'immagine...</p>
         <p style="font-size: 0.75rem; color: var(--text-subtle);">Elaborazione visiva via Pollinations AI in corso</p>
       </div>
 
-      <!-- Active Result Display Box -->
+      <!-- Active Result Box -->
       <div id="preview-result" class="result-wrap hidden">
         <div class="img-display-frame">
-          <img id="active-generated-img" src="" alt="Immagine generata" onload="onImageLoadedSuccess()" onerror="onImageLoadedError()">
+          <img id="active-generated-img" src="" alt="Immagine generata" onload="window.onImageLoadedSuccess()" onerror="window.onImageLoadedError()">
         </div>
 
         <div class="result-controls">
@@ -1018,15 +1410,15 @@
             <p id="active-meta-display" style="font-size: 0.7rem; color: var(--text-subtle); margin-top: 2px;"></p>
           </div>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button type="button" onclick="useActiveAsSource()" class="btn-action" title="Usa come immagine di partenza per la prossima generazione">
+            <button type="button" onclick="window.useActiveAsSource()" class="btn-action" title="Usa come immagine di partenza per la prossima generazione">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8C6.25 13.93 6 12.99 6 12c0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.45.87.7 1.81.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
               Usa Sorgente
             </button>
-            <button type="button" onclick="openLightboxModal()" class="btn-action" title="Visualizza a schermo intero">
+            <button type="button" onclick="window.openLightboxModal()" class="btn-action" title="Visualizza a schermo intero">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
               Ingrandisci
             </button>
-            <button type="button" onclick="downloadActiveImage()" class="btn-action btn-action-primary" title="Scarica l'immagine nel tuo dispositivo">
+            <button type="button" onclick="window.downloadActiveImage()" class="btn-action btn-action-primary" title="Scarica l'immagine">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
               Scarica
             </button>
@@ -1043,14 +1435,12 @@
           <svg class="svg-icon" style="color: var(--brand-primary)" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H9l2-2.71zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
           Galleria Immagini Create
         </h3>
-        <button type="button" id="clear-gallery-btn" onclick="clearGallery()" class="btn-action hidden" style="color: #f87171;">
+        <button type="button" id="clear-gallery-btn" onclick="window.clearAllHistory()" class="btn-action hidden" style="color: #f87171;">
           Svuota Galleria
         </button>
       </div>
 
-      <div id="gallery-grid" class="gallery-grid">
-        <!-- Populated via JS -->
-      </div>
+      <div id="gallery-grid" class="gallery-grid"></div>
 
       <div id="gallery-empty" class="glass-card" style="padding: 2rem; text-align: center; border-radius: var(--radius-lg);">
         <p style="font-size: 0.85rem; color: var(--text-subtle);">La tua galleria personale è vuota. Le immagini generate appariranno qui.</p>
@@ -1059,22 +1449,22 @@
 
   </main>
 
-  <!-- Modal Lightbox -->
-  <div id="modal" class="modal-backdrop" onclick="closeLightboxModal()">
-    <button class="modal-close" onclick="closeLightboxModal()">
+  <!-- Lightbox Modal -->
+  <div id="modal" class="modal-backdrop" onclick="window.closeLightboxModal()">
+    <button class="modal-close" onclick="window.closeLightboxModal()">
       <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </button>
     <div class="modal-content" onclick="event.stopPropagation()">
       <img id="modal-img" src="" alt="Schermo intero" class="modal-img">
       <p id="modal-caption" style="font-size: 0.85rem; color: var(--text-muted); text-align: center;"></p>
-      <button type="button" onclick="downloadActiveImage()" class="btn-action btn-action-primary">
+      <button type="button" onclick="window.downloadActiveImage()" class="btn-action btn-action-primary">
         <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
         Scarica Ora
       </button>
     </div>
   </div>
 
-  <!-- Toast Message -->
+  <!-- Toast Notification -->
   <div id="toast" class="toast">
     <svg class="svg-icon" style="color: #34d399;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
     <span id="toast-msg">Notifica</span>
@@ -1086,392 +1476,37 @@
     <p style="margin-top: 4px; color: #fb7185; font-weight: 600;">Powered by Angelo Martelli</p>
   </footer>
 
+  <!-- Initialization Code -->
   <script>
-    // Styles Presets
-    const STYLES = [
-      { name: "Fotorealistico", prompt: "photorealistic, 8k resolution, cinematic lighting, hyperdetailed, sharp focus" },
-      { name: "Anime / Manga", prompt: "anime style, studio ghibli aesthetic, clean line art, vibrant colors, masterpiece" },
-      { name: "Cyberpunk", prompt: "cyberpunk, glowing neon lights, futuristic cityscape, dramatic reflections, high contrast" },
-      { name: "Fantasy 3D", prompt: "octane render 3d, pixar style, soft shadows, vibrant fantasy concept art" },
-      { name: "Acquerello", prompt: "watercolor painting, soft fluid color washes, artistic ink line details" },
-      { name: "Minimalist", prompt: "minimalist illustration, clean shapes, vector art, elegant pastel palette" },
-      { name: "Cinematic", prompt: "cinematic film still, anamorphic lens flare, moody color grading, dramatic depth of field" },
-      { name: "Digital Art", prompt: "digital painting, rich textures, fantasy artwork, expressive brush strokes" }
-    ];
-
-    // Inspiration Prompts
-    const RANDOM_PROMPTS = [
-      "Vesuvio galattico con stelle e nebulose brillanti",
-      "Gatto chef napoletano che inforna una pizza nello spazio",
-      "Vespa rossa vintage volante sopra la città del 2099",
-      "Castello di cristallo sospeso tra le nuvole al tramonto",
-      "Leone maestoso con la criniera fatta di aurora boreale",
-      "Robot antico ricoperto di muschio in una foresta incantata"
-    ];
-
-    // Loading status texts for realistic dynamic feedback
-    const LOADING_MESSAGES = [
-      "Sto impastando l'immagine...",
-      "Aggiungendo i dettagli artistici...",
-      "Applicando l'illuminazione...",
-      "Quasi pronta!"
-    ];
-
-    // App State
-    let selectedStyleIndex = null;
-    let selectedWidth = 1024;
-    let selectedHeight = 1024;
-    let selectedRatioLabel = "1:1";
-    let sourceImageBase64 = null;
-    let currentImageObject = null;
-    let galleryHistory = [];
-    let loadingInterval = null;
-
-    // DOM Elements
-    const promptInput = document.getElementById('prompt-input');
-    const clearPromptBtn = document.getElementById('clear-prompt-btn');
-    const dropzonePlaceholder = document.getElementById('dropzone-placeholder');
-    const dropzonePreview = document.getElementById('dropzone-preview');
-    const sourceImgPreview = document.getElementById('source-img-preview');
-    const sourceImgName = document.getElementById('source-img-name');
-    const generateBtnLabel = document.getElementById('generate-btn-label');
-    const previewPlaceholder = document.getElementById('preview-placeholder');
-    const previewLoading = document.getElementById('preview-loading');
-    const previewResult = document.getElementById('preview-result');
-    const activeGeneratedImg = document.getElementById('active-generated-img');
-    const activePromptDisplay = document.getElementById('active-prompt-display');
-    const activeMetaDisplay = document.getElementById('active-meta-display');
-    const loadingStatus = document.getElementById('loading-status');
-    const galleryGrid = document.getElementById('gallery-grid');
-    const galleryEmpty = document.getElementById('gallery-empty');
-    const historyCounter = document.getElementById('history-counter');
-    const clearGalleryBtn = document.getElementById('clear-gallery-btn');
-
-    // Startup Initialization
-    window.addEventListener('DOMContentLoaded', () => {
-      renderStyles();
-      loadHistoryFromStorage();
-      setupDragDrop();
-    });
-
-    function renderStyles() {
-      const container = document.getElementById('styles-grid');
-      container.innerHTML = STYLES.map((style, idx) => `
-        <button type="button" onclick="toggleStyle(${idx})" class="style-pill" id="style-pill-${idx}">
-          <span>${style.name}</span>
-        </button>
-      `).join('');
-    }
-
-    function toggleStyle(index) {
-      const pills = document.querySelectorAll('.style-pill');
-      if (selectedStyleIndex === index) {
-        selectedStyleIndex = null;
-        pills[index].classList.remove('active');
-      } else {
-        pills.forEach(p => p.classList.remove('active'));
-        selectedStyleIndex = index;
-        pills[index].classList.add('active');
-      }
-    }
-
-    function setRatio(w, h, label, btnElement) {
-      selectedWidth = w;
-      selectedHeight = h;
-      selectedRatioLabel = label;
-      document.querySelectorAll('.ratio-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
-    }
-
-    function toggleClearBtn() {
-      if (promptInput.value.trim().length > 0) {
-        clearPromptBtn.classList.remove('hidden');
-      } else {
-        clearPromptBtn.classList.add('hidden');
-      }
-    }
-
-    function clearPrompt() {
-      promptInput.value = '';
-      clearPromptBtn.classList.add('hidden');
-      promptInput.focus();
-    }
-
-    function insertRandomPrompt() {
-      const r = RANDOM_PROMPTS[Math.floor(Math.random() * RANDOM_PROMPTS.length)];
-      promptInput.value = r;
-      toggleClearBtn();
-      showToast("Prompt d'ispirazione caricato!");
-    }
-
-    function enhancePrompt() {
-      const current = promptInput.value.trim();
-      if (!current) {
-        showToast("Inserisci prima una parola da arricchire!");
-        return;
-      }
-      const extras = [
-        "cinematic lighting, dramatic atmosphere, highly detailed, 8k resolution",
-        "masterpiece quality, vibrant color palette, intricate background, sharp focus",
-        "epic visual composition, elegant details, breathtaking aesthetic"
-      ];
-      const selectedAdd = extras[Math.floor(Math.random() * extras.length)];
-      promptInput.value = `${current}, ${selectedAdd}`;
-      toggleClearBtn();
-      showToast("Prompt arricchito con dettagli AI!");
-    }
-
-    function setupDragDrop() {
-      const dropzone = document.getElementById('dropzone');
-      ['dragenter', 'dragover'].forEach(name => {
-        dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-      });
-      ['dragleave', 'drop'].forEach(name => {
-        dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); });
-      });
-      dropzone.addEventListener('drop', (e) => {
-        const files = e.dataTransfer.files;
-        if (files && files.length > 0) {
-          handleFile(files[0]);
-        }
-      });
-    }
-
-    function handleFileSelect(e) {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        handleFile(files[0]);
-      }
-    }
-
-    function handleFile(file) {
-      if (!file.type.startsWith('image/')) {
-        showToast("Seleziona un file immagine valido!");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        sourceImageBase64 = e.target.result;
-        sourceImgPreview.src = sourceImageBase64;
-        sourceImgName.textContent = file.name;
-        dropzonePlaceholder.classList.add('hidden');
-        dropzonePreview.classList.remove('hidden');
-        generateBtnLabel.textContent = "Modifica & Trasforma Immagine";
-        showToast("Immagine sorgente pronta!");
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeSourceImage(e) {
-      if (e) e.stopPropagation();
-      sourceImageBase64 = null;
-      document.getElementById('file-input').value = '';
-      dropzonePreview.classList.add('hidden');
-      dropzonePlaceholder.classList.remove('hidden');
-      generateBtnLabel.textContent = "Genera Immagine Ora";
-      showToast("Immagine sorgente rimossa.");
-    }
-
-    function startGeneration() {
-      const userText = promptInput.value.trim();
-
-      if (!userText && !sourceImageBase64) {
-        showToast("Scrivi una parola o carica un'immagine di sorgente!");
-        promptInput.focus();
-        return;
-      }
-
-      let finalPrompt = userText || "creative artistic image, high detail";
-      if (selectedStyleIndex !== null) {
-        finalPrompt += `, ${STYLES[selectedStyleIndex].prompt}`;
-      }
-
-      // If source image is present, add descriptor hint
-      if (sourceImageBase64) {
-        finalPrompt += ", inspired by reference image layout and structure";
-      }
-
-      // UI Loading setup
-      previewPlaceholder.classList.add('hidden');
-      previewResult.classList.add('hidden');
-      previewLoading.classList.remove('hidden');
-
-      const genBtn = document.getElementById('generate-btn');
-      genBtn.disabled = true;
-
-      // Dynamic Loading Status Text Loop
-      let msgIdx = 0;
-      loadingStatus.textContent = LOADING_MESSAGES[0];
-      clearInterval(loadingInterval);
-      loadingInterval = setInterval(() => {
-        msgIdx = (msgIdx + 1) % LOADING_MESSAGES.length;
-        loadingStatus.textContent = LOADING_MESSAGES[msgIdx];
-      }, 2500);
-
-      // Seed generator for reliable cache busting
-      const seed = Math.floor(Math.random() * 999999);
-      const encodedPrompt = encodeURIComponent(finalPrompt);
-      const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=${selectedWidth}&height=${selectedHeight}&seed=${seed}&nologo=true`;
-
-      // Set active image meta
-      currentImageObject = {
-        id: Date.now(),
-        url: imageUrl,
-        prompt: userText || "Trasformazione sorgente",
-        style: selectedStyleIndex !== null ? STYLES[selectedStyleIndex].name : "Nessuno",
-        ratio: selectedRatioLabel,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      // Set image source to trigger load
-      activeGeneratedImg.src = imageUrl;
-    }
-
-    function onImageLoadedSuccess() {
-      clearInterval(loadingInterval);
-      previewLoading.classList.add('hidden');
-      previewResult.classList.remove('hidden');
-
-      document.getElementById('generate-btn').disabled = false;
-
-      activePromptDisplay.textContent = `"${currentImageObject.prompt}"`;
-      activeMetaDisplay.textContent = `Formato: ${currentImageObject.ratio} • Stile: ${currentImageObject.style}`;
-
-      // Save to gallery history
-      galleryHistory.unshift(currentImageObject);
-      saveHistoryToStorage();
-      updateGalleryUI();
-
-      showToast("Immagine creata con successo!");
-    }
-
-    function onImageLoadedError() {
-      clearInterval(loadingInterval);
-      previewLoading.classList.add('hidden');
-      previewPlaceholder.classList.remove('hidden');
-      document.getElementById('generate-btn').disabled = false;
-      showToast("Errore durante il caricamento. Riprova.");
-    }
-
-    function useActiveAsSource() {
-      if (!currentImageObject) return;
-      sourceImageBase64 = currentImageObject.url;
-      sourceImgPreview.src = sourceImageBase64;
-      sourceImgName.textContent = `Immagine #${currentImageObject.id}`;
-      dropzonePlaceholder.classList.add('hidden');
-      dropzonePreview.classList.remove('hidden');
-      generateBtnLabel.textContent = "Modifica & Trasforma Immagine";
-      showToast("Immagine impostata come sorgente!");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function downloadActiveImage() {
-      if (!currentImageObject) return;
-      const filename = `che-vuo-${currentImageObject.id}.jpg`;
-      
-      fetch(currentImageObject.url)
-        .then(res => res.blob())
-        .then(blob => {
-          const a = document.createElement('a');
-          const blobUrl = URL.createObjectURL(blob);
-          a.href = blobUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-          showToast("Download avviato!");
-        })
-        .catch(() => {
-          // Fallback direct open
-          window.open(currentImageObject.url, '_blank');
-        });
-    }
-
-    function openLightboxModal() {
-      if (!currentImageObject) return;
-      document.getElementById('modal-img').src = currentImageObject.url;
-      document.getElementById('modal-caption').textContent = `"${currentImageObject.prompt}" (${currentImageObject.ratio})`;
-      document.getElementById('modal').classList.add('open');
-    }
-
-    function closeLightboxModal() {
-      document.getElementById('modal').classList.remove('open');
-    }
-
-    function loadHistoryFromStorage() {
-      try {
-        const saved = localStorage.getItem('chevuo_gallery_history');
-        if (saved) {
-          galleryHistory = JSON.parse(saved);
-          updateGalleryUI();
-        }
-      } catch (e) {
-        console.warn("localStorage non accessibile:", e);
-      }
-    }
-
-    function saveHistoryToStorage() {
-      try {
-        const sliced = galleryHistory.slice(0, 30);
-        localStorage.setItem('chevuo_gallery_history', JSON.stringify(sliced));
-      } catch (e) {
-        console.warn("Errore salvataggio localStorage:", e);
-      }
-    }
-
-    function updateGalleryUI() {
-      historyCounter.textContent = galleryHistory.length;
-
-      if (galleryHistory.length > 0) {
-        galleryEmpty.classList.add('hidden');
-        clearGalleryBtn.classList.remove('hidden');
-
-        galleryGrid.innerHTML = galleryHistory.map((item) => `
-          <div class="gallery-card">
-            <img src="${item.url}" alt="${item.prompt}" class="gallery-card-img" loading="lazy">
-            <div class="gallery-card-body">
-              <p class="gallery-card-title">${item.prompt}</p>
-              <div class="gallery-card-meta">
-                <span>${item.ratio}</span>
-                <span>${item.timestamp}</span>
-              </div>
-            </div>
-            <div class="gallery-overlay">
-              <button type="button" onclick="viewHistoryItem('${item.url}', '${item.prompt.replace(/'/g, "\\'")}')" class="btn-action" style="padding: 0.4rem 0.75rem; font-size:0.7rem;">
-                Ingrandisci
-              </button>
-            </div>
-          </div>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Render Styles
+      const stylesGrid = document.getElementById('styles-grid');
+      if (stylesGrid) {
+        stylesGrid.innerHTML = STYLES.map((style, idx) => `
+          <button type="button" onclick="window.toggleStyle(${idx})" class="style-pill" id="style-pill-${idx}">
+            <span>${style.name}</span>
+          </button>
         `).join('');
-      } else {
-        galleryEmpty.classList.remove('hidden');
-        clearGalleryBtn.classList.add('hidden');
-        galleryGrid.innerHTML = '';
       }
-    }
 
-    function viewHistoryItem(url, promptText) {
-      currentImageObject = { url, prompt: promptText, ratio: 'Galleria' };
-      openLightboxModal();
-    }
+      // Drag & Drop
+      const dropzone = document.getElementById('dropzone');
+      if (dropzone) {
+        ['dragenter', 'dragover'].forEach(evtName => {
+          dropzone.addEventListener(evtName, (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+        });
+        ['dragleave', 'drop'].forEach(evtName => {
+          dropzone.addEventListener(evtName, (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); });
+        });
+        dropzone.addEventListener('drop', (e) => {
+          const files = e.dataTransfer ? e.dataTransfer.files : null;
+          if (files && files.length > 0) window.processFile(files[0]);
+        });
+      }
 
-    function clearGallery() {
-      galleryHistory = [];
-      try { localStorage.removeItem('chevuo_gallery_history'); } catch(e){}
-      updateGalleryUI();
-      showToast("Galleria svuotata.");
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      toastMsg.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
+      // Load Saved Gallery
+      window.loadHistoryFromStorage();
+    });
   </script>
 </body>
 </html>
